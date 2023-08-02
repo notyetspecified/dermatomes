@@ -167,6 +167,15 @@ div.settings > div > label {
   background-color: #00000000;
 }
 
+hr {
+  /* margin: 0.5rem 0; */
+  border: 0;
+  border-top: 1px solid var(--color-light);
+}
+
+.content_item {
+  max-width: 800px;
+}
 
 /* scrollbars */
 ::-webkit-scrollbar {
@@ -199,6 +208,9 @@ div.settings > div > label {
   }
   .content {
     padding: 0;
+  }
+  .content_item {
+    padding: 0 0.5rem;
   }
   object {
     margin: 0.5rem 0;
