@@ -1,19 +1,19 @@
 // window.addEventListener('DOMContentLoaded', () => {
-  const objects = {
-    male: {
-      labels: true,
-      lines: true,
-      colors: true,
-      skinType: 'none',
-    },
-    female: {
-      labels: true,
-      lines: true,
-      colors: true,
-      skinType: 'none',
-    },
-  };
-  const noColors = `
+const objects = {
+  male: {
+    labels: true,
+    lines: true,
+    colors: true,
+    skinType: 'none',
+  },
+  female: {
+    labels: true,
+    lines: true,
+    colors: true,
+    skinType: 'none',
+  },
+};
+const noColors = `
     --color12: #00000000;
     --color13: #00000000;
     --color14: #00000000;
@@ -58,7 +58,7 @@
     --color53: #00000000;
     --color54: #00000000;
     --color55: #00000000;`;
-  const colors = `
+const colors = `
     --color12: #e89cb6;
     --color13: #c8ea91;
     --color14: #c8ea9b;
@@ -104,8 +104,8 @@
     --color54: #bee895;
     --color55: #c6a2de;
   `;
-  const skinTypes = {
-    none: `
+const skinTypes = {
+  none: `
       /* eyebrows */
       --color1: #616161;
       /* head contour */
@@ -124,7 +124,7 @@
       /* lines */
       --color11: #c0c0c0;
     `,
-    light: `
+  light: `
       /* eyebrows */
       --color1: #8d5337;
       /* head contour */
@@ -142,7 +142,7 @@
       --color9: #a2571b;
       /* lines */
       --color11: #ddaa82;`,
-    medium: `
+  medium: `
       /* eyebrows */
       --color1: #3b2a14;
       /* head contour */
@@ -160,7 +160,7 @@
       --color9: #521e12;
       /* lines */
       --color11: #b37344;`,
-    dark: `
+  dark: `
       /* eyebrows */
       --color1: #2b1a0e;
       /* head contour */
@@ -178,27 +178,24 @@
       --color9: #331a0f;
       /* lines */
       --color11: #7d4f3b;`,
-  };
+};
 
-  const createStyle = (id, content) => {
-    const style = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'style'
-    );
-    style.id = id;
-    style.textContent = content;
-    return style;
-  };
-  const update = (id) => (ev) => {
-    const svg = ev.target;
-    // compare parent id to id
-    if (svg.parentElement.id !== id) return;
-    const svgDoc = svg.contentWindow.document;
-    const svgEl = svgDoc.querySelector('svg');
+const createStyle = (id, content) => {
+  const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+  style.id = id;
+  style.textContent = content;
+  return style;
+};
+const update = (id) => (ev) => {
+  const svg = ev.target;
+  // compare parent id to id
+  if (svg.parentElement.id !== id) return;
+  const svgDoc = svg.contentWindow.document;
+  const svgEl = svgDoc.querySelector('svg');
 
-    let content;
-    if (!svgDoc.querySelector('#static-style')) {
-      content = `
+  let content;
+  if (!svgDoc.querySelector('#static-style')) {
+    content = `
         body {
           margin: 0;
           padding: 0;
@@ -208,11 +205,11 @@
           overflow: hidden;
         }
     `;
-      const bodyStyle = createStyle('static-style', content);
-      svgEl.appendChild(bodyStyle);
-    }
-    let dynStyle = svgDoc.querySelector('#dyn-style');
-    content = `
+    const bodyStyle = createStyle('static-style', content);
+    svgEl.appendChild(bodyStyle);
+  }
+  let dynStyle = svgDoc.querySelector('#dyn-style');
+  content = `
       :root {
         --label-color: #444;
       }
@@ -228,80 +225,80 @@
         display: ${objects[id].lines ? 'block' : 'none'};
       }
       `;
-    if (!dynStyle) {
-      dynStyle = createStyle('dyn-style', content);
-      svgEl.appendChild(dynStyle);
-    } else {
-      dynStyle.textContent = content;
-    }
+  if (!dynStyle) {
+    dynStyle = createStyle('dyn-style', content);
+    svgEl.appendChild(dynStyle);
+  } else {
+    dynStyle.textContent = content;
+  }
 
-    // set colors
-    if (objects[id].colors) {
-      dynStyle.textContent += `
+  // set colors
+  if (objects[id].colors) {
+    dynStyle.textContent += `
         :root {
           ${colors}
         }
       `;
-    } else {
-      dynStyle.textContent += `
+  } else {
+    dynStyle.textContent += `
         :root {
           ${noColors}
         }
       `;
-    }
-    // set skin type
-    dynStyle.textContent += `
+  }
+  // set skin type
+  dynStyle.textContent += `
         :root {
           ${skinTypes[objects[id].skinType]}
         }
       `;
-  };
-  // inject style into svg object
-  const wrappers = document.querySelectorAll('.wrapper');
-  wrappers.forEach((wrapper) => {
-    const id = wrapper.id;
-    const svg = wrapper.querySelector('object');
-    const svgDoc = svg.contentWindow.document;
-    const svgEl = svgDoc.querySelector('html');
-    const style = createStyle('static-style', '');
-    svgEl.appendChild(style);
-    svg.addEventListener('load', update(id));
-    // window.addEventListener('resize', update(id));
+};
+// inject style into svg object
+const wrappers = document.querySelectorAll('.wrapper');
+wrappers.forEach((wrapper) => {
+  const id = wrapper.id;
+  const svg = wrapper.querySelector('object');
+  const svgDoc = svg.contentWindow.document;
+  const svgEl = svgDoc.querySelector('html');
+  const style = createStyle('static-style', '');
+  svgEl.appendChild(style);
+  svg.addEventListener('load', update(id));
+  // window.addEventListener('resize', update(id));
 
-    const labelsCB = wrapper.querySelector('[name=labels]');
-    labelsCB.addEventListener('change', (event) => {
-      objects[id].labels = event.target.checked;
-      update(id)({ target: svg });
-    });
-
-    const linesCB = wrapper.querySelector('[name=lines]');
-    linesCB.addEventListener('change', (event) => {
-      objects[id].lines = event.target.checked;
-      update(id)({ target: svg });
-    });
-
-    const colorsCB = wrapper.querySelector('[name=colors]');
-    colorsCB.addEventListener('change', (event) => {
-      objects[id].colors = event.target.checked;
-      update(id)({ target: svg });
-    });
-
-    const skinTypeSelect = wrapper.querySelector('[name=skin-type]');
-    skinTypeSelect.addEventListener('change', (event) => {
-      objects[id].skinType = event.target.value;
-      update(id)({ target: svg });
-    });
+  const labelsCB = wrapper.querySelector('[name=labels]');
+  labelsCB.addEventListener('change', (event) => {
+    objects[id].labels = event.target.checked;
+    update(id)({ target: svg });
   });
-  // on content scroll
-  let barTimeout;
-  const content = document.querySelector('.content');
-  content.addEventListener('scroll', (event) => {
-    if (barTimeout) {
-      clearTimeout(barTimeout); //clear to reset
-    }
-    barTimeout = setTimeout(() => {
-      content.classList.remove('scrolling');
-    }, 500);
-    content.classList.add('scrolling');
+
+  const linesCB = wrapper.querySelector('[name=lines]');
+  linesCB.addEventListener('change', (event) => {
+    objects[id].lines = event.target.checked;
+    update(id)({ target: svg });
   });
+
+  const colorsCB = wrapper.querySelector('[name=colors]');
+  colorsCB.addEventListener('change', (event) => {
+    objects[id].colors = event.target.checked;
+    update(id)({ target: svg });
+  });
+
+  const skinTypeSelect = wrapper.querySelector('[name=skin-type]');
+  skinTypeSelect.addEventListener('change', (event) => {
+    objects[id].skinType = event.target.value;
+    update(id)({ target: svg });
+  });
+});
+// on content scroll
+let barTimeout;
+const content = document.querySelector('.content');
+content.addEventListener('scroll', (event) => {
+  if (barTimeout) {
+    clearTimeout(barTimeout); //clear to reset
+  }
+  barTimeout = setTimeout(() => {
+    content.classList.remove('scrolling');
+  }, 500);
+  content.classList.add('scrolling');
+});
 // });
